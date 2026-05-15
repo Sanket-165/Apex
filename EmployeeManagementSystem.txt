@@ -1,0 +1,400 @@
+========================================
+EMPLOYEE MANAGEMENT SYSTEM
+USING CONSOLE-BASED APEX
+========================================
+
+
+OBJECTIVE
+----------------------------------------
+Develop a menu-driven Employee Management
+System in Salesforce using Apex.
+
+The system manages employee records:
+
+1. Emp ID
+2. Emp Name
+3. Email
+4. Birth Date
+5. Department
+
+Operations:
+1. Add Employee
+2. Display Employees
+3. Delete Employee
+
+
+========================================
+STEP 1: CREATE CUSTOM OBJECT
+========================================
+
+1. Login to Salesforce
+
+2. Go to:
+   Setup → Object Manager
+
+3. Click:
+   Create → Custom Object
+
+4. Enter Details:
+
+   Label: Employee
+   Plural Label: Employees
+   Object Name: Employee
+
+5. Click Save
+
+
+========================================
+STEP 2: CREATE FIELDS
+========================================
+
+----------------------------------------
+FIELD 1 : Emp ID
+----------------------------------------
+
+1. Open Employee Object
+
+2. Go to:
+   Fields & Relationships → New
+
+3. Select:
+   Number
+
+4. Enter:
+
+   Field Label: Emp ID
+   Length: 5
+   Decimal Places: 0
+
+5. Save
+
+API NAME:
+Emp_ID__c
+
+
+----------------------------------------
+FIELD 2 : Email
+----------------------------------------
+
+1. Click New
+
+2. Select:
+   Email
+
+3. Enter:
+
+   Field Label: Email
+
+4. Save
+
+API NAME:
+Email__c
+
+
+----------------------------------------
+FIELD 3 : Birth Date
+----------------------------------------
+
+1. Click New
+
+2. Select:
+   Date
+
+3. Enter:
+
+   Field Label: Birth Date
+
+4. Save
+
+API NAME:
+Birth_Date__c
+
+
+----------------------------------------
+FIELD 4 : Department
+----------------------------------------
+
+1. Click New
+
+2. Select:
+   Text
+
+3. Enter:
+
+   Field Label: Department
+   Length: 50
+
+4. Save
+
+API NAME:
+Department__c
+
+
+========================================
+STEP 3: CREATE APEX CLASS
+========================================
+
+Go to:
+Setup → Apex Classes → New
+
+CLASS NAME:
+EmployeeManagementSystem
+
+
+----------------------------------------
+APEX CODE
+----------------------------------------
+
+public class EmployeeManagementSystem {
+
+    // Menu Method
+    public static void menu(
+
+        Integer choice,
+        Integer empId,
+        String empName,
+        String email,
+        Date birthDate,
+        String department
+    ) {
+
+        // 1. Add Employee
+        if(choice == 1) {
+
+            Employee__c emp = new Employee__c();
+
+            emp.Emp_ID__c = empId;
+            emp.Name = empName;
+            emp.Email__c = email;
+            emp.Birth_Date__c = birthDate;
+            emp.Department__c = department;
+
+            insert emp;
+
+            System.debug(
+                'Employee Added Successfully'
+            );
+        }
+
+        // 2. Display Employees
+        else if(choice == 2) {
+
+            List<Employee__c> empList = [
+
+                SELECT Id,
+                       Name,
+                       Emp_ID__c,
+                       Email__c,
+                       Birth_Date__c,
+                       Department__c
+
+                FROM Employee__c
+            ];
+
+            System.debug(
+                '===== EMPLOYEE RECORDS ====='
+            );
+
+            for(Employee__c emp : empList) {
+
+                System.debug(
+
+                    'Emp ID: ' + emp.Emp_ID__c +
+
+                    ' | Name: ' + emp.Name +
+
+                    ' | Email: ' + emp.Email__c +
+
+                    ' | Birth Date: ' +
+                    emp.Birth_Date__c +
+
+                    ' | Department: ' +
+                    emp.Department__c
+                );
+            }
+        }
+
+        // 3. Delete Employee
+        else if(choice == 3) {
+
+            Employee__c emp = [
+
+                SELECT Id
+                FROM Employee__c
+                WHERE Emp_ID__c = :empId
+                LIMIT 1
+            ];
+
+            delete emp;
+
+            System.debug(
+                'Employee Deleted Successfully'
+            );
+        }
+
+        else {
+
+            System.debug('Invalid Choice');
+        }
+    }
+}
+
+
+========================================
+STEP 4: OPEN DEVELOPER CONSOLE
+========================================
+
+1. Click Gear Icon
+
+2. Open:
+   Developer Console
+
+
+========================================
+STEP 5: OPEN EXECUTE ANONYMOUS
+========================================
+
+Go to:
+
+Debug → Open Execute Anonymous Window
+
+Shortcut:
+Ctrl + E
+
+
+========================================
+MENU OPERATIONS
+========================================
+
+----------------------------------------
+1. ADD EMPLOYEE
+----------------------------------------
+
+EmployeeManagementSystem.menu(
+
+    1,
+    101,
+    'Sanket',
+    'sanket@gmail.com',
+    Date.newInstance(2005,2,21),
+    'IT'
+);
+
+
+----------------------------------------
+2. DISPLAY EMPLOYEES
+----------------------------------------
+
+EmployeeManagementSystem.menu(
+
+    2,
+    null,
+    null,
+    null,
+    null,
+    null
+);
+
+
+----------------------------------------
+3. DELETE EMPLOYEE
+----------------------------------------
+
+Delete employee with Emp ID = 101
+
+EmployeeManagementSystem.menu(
+
+    3,
+    101,
+    null,
+    null,
+    null,
+    null
+);
+
+
+========================================
+HOW TO VIEW OUTPUT
+========================================
+
+1. Open Logs
+
+2. Double click latest log
+
+3. Open:
+   Debug Only
+
+4. Check:
+   USER_DEBUG
+
+
+========================================
+SAMPLE OUTPUT
+========================================
+
+===== EMPLOYEE RECORDS =====
+
+Emp ID: 101
+Name: Sanket
+Email: sanket@gmail.com
+Birth Date: 2005-02-21
+Department: IT
+
+
+========================================
+WHY IT IS MENU-DRIVEN
+========================================
+
+Choice 1 → Add Employee
+
+Choice 2 → Display Employees
+
+Choice 3 → Delete Employee
+
+The menu is simulated using the
+choice parameter.
+
+
+========================================
+IMPORTANT API NAMES
+========================================
+
+Employee Object:
+Employee__c
+
+Fields:
+Emp_ID__c
+Email__c
+Birth_Date__c
+Department__c
+
+
+========================================
+VIVA QUESTIONS
+========================================
+
+1. What is Apex?
+   Apex is Salesforce backend language.
+
+2. What is Execute Anonymous?
+   Used to execute Apex code temporarily.
+
+3. What is System.debug()?
+   Used to print output in logs.
+
+4. Why use Emp_ID__c for delete?
+   Because it is a meaningful business
+   identifier.
+
+
+========================================
+FINAL COMPONENTS
+========================================
+
+Custom Object:
+Employee
+
+Apex Class:
+EmployeeManagementSystem
+
+========================================

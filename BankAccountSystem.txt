@@ -1,0 +1,366 @@
+========================================
+BANK ACCOUNT SYSTEM
+USING CONSOLE-BASED APEX
+========================================
+
+
+OBJECTIVE
+----------------------------------------
+Develop a Bank Account System in Salesforce
+using Apex.
+
+The system manages customer records:
+
+1. Customer ID
+2. Customer Name
+3. Email
+4. Birth Date
+5. Account Type
+
+Operations:
+1. Add Customer
+2. Display Customers
+3. Delete Customer
+
+
+========================================
+STEP 1: CREATE CUSTOM OBJECT
+========================================
+
+1. Login to Salesforce
+
+2. Go to:
+   Setup → Object Manager
+
+3. Click:
+   Create → Custom Object
+
+4. Enter Details:
+
+   Label: Customer
+   Plural Label: Customers
+   Object Name: Customer
+
+5. Click Save
+
+
+========================================
+STEP 2: CREATE FIELDS
+========================================
+
+----------------------------------------
+FIELD 1 : Customer ID
+----------------------------------------
+
+1. Open Customer Object
+
+2. Go to:
+   Fields & Relationships → New
+
+3. Select:
+   Number
+
+4. Enter:
+
+   Field Label: Customer ID
+   Length: 5
+   Decimal Places: 0
+
+5. Save
+
+API NAME:
+Customer_ID__c
+
+
+----------------------------------------
+FIELD 2 : Email
+----------------------------------------
+
+1. Click New
+
+2. Select:
+   Email
+
+3. Enter:
+
+   Field Label: Email
+
+4. Save
+
+API NAME:
+Email__c
+
+
+----------------------------------------
+FIELD 3 : Birth Date
+----------------------------------------
+
+1. Click New
+
+2. Select:
+   Date
+
+3. Enter:
+
+   Field Label: Birth Date
+
+4. Save
+
+API NAME:
+Birth_Date__c
+
+
+----------------------------------------
+FIELD 4 : Account Type
+----------------------------------------
+
+1. Click New
+
+2. Select:
+   Text
+
+3. Enter:
+
+   Field Label: Account Type
+   Length: 50
+
+4. Save
+
+API NAME:
+Account_Type__c
+
+
+========================================
+STEP 3: CREATE APEX CLASS
+========================================
+
+Go to:
+Setup → Apex Classes → New
+
+CLASS NAME:
+BankAccountSystem
+
+
+----------------------------------------
+APEX CODE
+----------------------------------------
+
+public class BankAccountSystem {
+
+    // Add Customer
+    public static void addCustomer(
+
+        Integer customerId,
+        String customerName,
+        String email,
+        Date birthDate,
+        String accountType
+    ) {
+
+        Customer__c cust = new Customer__c();
+
+        cust.Customer_ID__c = customerId;
+        cust.Name = customerName;
+        cust.Email__c = email;
+        cust.Birth_Date__c = birthDate;
+        cust.Account_Type__c = accountType;
+
+        insert cust;
+
+        System.debug(
+            'Customer Added Successfully'
+        );
+    }
+
+
+    // Display Customers
+    public static void displayCustomers() {
+
+        List<Customer__c> custList = [
+
+            SELECT Id,
+                   Name,
+                   Customer_ID__c,
+                   Email__c,
+                   Birth_Date__c,
+                   Account_Type__c
+
+            FROM Customer__c
+        ];
+
+        System.debug(
+            '===== CUSTOMER RECORDS ====='
+        );
+
+        for(Customer__c cust : custList) {
+
+            System.debug(
+
+                'Customer ID: ' +
+                cust.Customer_ID__c +
+
+                ' | Name: ' +
+                cust.Name +
+
+                ' | Email: ' +
+                cust.Email__c +
+
+                ' | Birth Date: ' +
+                cust.Birth_Date__c +
+
+                ' | Account Type: ' +
+                cust.Account_Type__c
+            );
+        }
+    }
+
+
+    // Delete Customer
+    public static void deleteCustomer(
+        Integer customerId
+    ) {
+
+        Customer__c cust = [
+
+            SELECT Id
+            FROM Customer__c
+            WHERE Customer_ID__c = :customerId
+            LIMIT 1
+        ];
+
+        delete cust;
+
+        System.debug(
+            'Customer Deleted Successfully'
+        );
+    }
+}
+
+
+========================================
+STEP 4: OPEN DEVELOPER CONSOLE
+========================================
+
+1. Click Gear Icon
+
+2. Open:
+   Developer Console
+
+
+========================================
+STEP 5: OPEN EXECUTE ANONYMOUS
+========================================
+
+Go to:
+
+Debug → Open Execute Anonymous Window
+
+Shortcut:
+Ctrl + E
+
+
+========================================
+OPERATIONS
+========================================
+
+----------------------------------------
+1. ADD CUSTOMER
+----------------------------------------
+
+BankAccountSystem.addCustomer(
+
+    101,
+    'Sanket',
+    'sanket@gmail.com',
+    Date.newInstance(2005,2,21),
+    'Savings'
+);
+
+
+----------------------------------------
+2. DISPLAY CUSTOMERS
+----------------------------------------
+
+BankAccountSystem.displayCustomers();
+
+
+----------------------------------------
+3. DELETE CUSTOMER
+----------------------------------------
+
+Delete customer with Customer ID = 101
+
+BankAccountSystem.deleteCustomer(101);
+
+
+========================================
+HOW TO VIEW OUTPUT
+========================================
+
+1. Open Logs
+
+2. Double click latest log
+
+3. Open:
+   Debug Only
+
+4. Check:
+   USER_DEBUG
+
+
+========================================
+SAMPLE OUTPUT
+========================================
+
+===== CUSTOMER RECORDS =====
+
+Customer ID: 101
+Name: Sanket
+Email: sanket@gmail.com
+Birth Date: 2005-02-21
+Account Type: Savings
+
+
+========================================
+IMPORTANT API NAMES
+========================================
+
+Customer Object:
+Customer__c
+
+Fields:
+Customer_ID__c
+Email__c
+Birth_Date__c
+Account_Type__c
+
+
+========================================
+VIVA QUESTIONS
+========================================
+
+1. What is Apex?
+   Apex is Salesforce backend language.
+
+2. What is Execute Anonymous?
+   Used to execute Apex code temporarily.
+
+3. What is System.debug()?
+   Used to print output in logs.
+
+4. Why use Customer_ID__c for delete?
+   Because it is a meaningful business
+   identifier.
+
+
+========================================
+FINAL COMPONENTS
+========================================
+
+Custom Object:
+Customer
+
+Apex Class:
+BankAccountSystem
+
+========================================

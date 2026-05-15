@@ -1,0 +1,312 @@
+========================================
+EMAIL NOTIFICATION SYSTEM
+USING CONSOLE-BASED APEX
+========================================
+
+
+OBJECTIVE
+----------------------------------------
+Develop a console-based Apex program that
+sends email notifications using Salesforce
+Email Services.
+
+Features:
+1. Send Email
+2. Send Email with Attachment
+3. Define Recipient Email
+4. Define Subject
+5. Define Message Body
+
+
+========================================
+STEP 1: OPEN DEVELOPER CONSOLE
+========================================
+
+1. Login to Salesforce
+
+2. Click:
+   Gear Icon
+
+3. Open:
+   Developer Console
+
+
+========================================
+STEP 2: CREATE APEX CLASS
+========================================
+
+Go to:
+
+File → New → Apex Class
+
+CLASS NAME:
+EmailServiceProgram
+
+
+========================================
+WITHOUT ATTACHMENT
+========================================
+
+----------------------------------------
+APEX CODE
+----------------------------------------
+
+public class EmailServiceProgram {
+
+    // Send Email Method
+    public static void sendEmail(
+
+        String recipientEmail,
+        String subject,
+        String body
+    ) {
+
+        // Create Email Object
+        Messaging.SingleEmailMessage mail =
+
+            new Messaging.SingleEmailMessage();
+
+        // Recipient Email
+        mail.setToAddresses(
+
+            new List<String>{
+                recipientEmail
+            }
+        );
+
+        // Subject
+        mail.setSubject(subject);
+
+        // Message Body
+        mail.setPlainTextBody(body);
+
+        // Send Email
+        Messaging.sendEmail(
+
+            new Messaging.SingleEmailMessage[] {
+                mail
+            }
+        );
+
+        System.debug(
+            'Email Sent Successfully'
+        );
+    }
+}
+
+
+========================================
+STEP 3: EXECUTE PROGRAM
+========================================
+
+Go to:
+
+Debug → Open Execute Anonymous Window
+
+Shortcut:
+Ctrl + E
+
+
+----------------------------------------
+EXECUTE CODE
+----------------------------------------
+
+EmailServiceProgram.sendEmail(
+
+    'sanket@gmail.com',
+
+    'Salesforce Email Test',
+
+    'Hello Sanket, this email is sent
+     using Apex.'
+);
+
+
+Click:
+Execute
+
+
+========================================
+WITH ATTACHMENT
+========================================
+
+----------------------------------------
+APEX CODE
+----------------------------------------
+
+public class EmailServiceProgram {
+
+    // Send Email With Attachment
+    public static void sendEmailWithAttachment(
+
+        String recipientEmail,
+        String subject,
+        String body
+    ) {
+
+        // Create Email Object
+        Messaging.SingleEmailMessage mail =
+
+            new Messaging.SingleEmailMessage();
+
+        // Recipient Email
+        mail.setToAddresses(
+
+            new List<String>{
+                recipientEmail
+            }
+        );
+
+        // Subject
+        mail.setSubject(subject);
+
+        // Message Body
+        mail.setPlainTextBody(body);
+
+        // Create Attachment
+        Messaging.EmailFileAttachment
+            attachment =
+
+            new Messaging.EmailFileAttachment();
+
+        // File Name
+        attachment.setFileName('sample.txt');
+
+        // File Content
+        attachment.setBody(
+
+            Blob.valueOf(
+
+                'This is sample attachment
+                 content.'
+            )
+        );
+
+        // Attach File
+        mail.setFileAttachments(
+
+            new Messaging.EmailFileAttachment[] {
+
+                attachment
+            }
+        );
+
+        // Send Email
+        Messaging.sendEmail(
+
+            new Messaging.SingleEmailMessage[] {
+                mail
+            }
+        );
+
+        System.debug(
+            'Email With Attachment Sent Successfully'
+        );
+    }
+}
+
+
+========================================
+STEP 4: EXECUTE ATTACHMENT PROGRAM
+========================================
+
+EmailServiceProgram.sendEmailWithAttachment(
+
+    'sanket@gmail.com',
+
+    'Salesforce Attachment Test',
+
+    'Hello, this email contains attachment.'
+);
+
+
+Click:
+Execute
+
+
+========================================
+HOW TO VIEW OUTPUT
+========================================
+
+1. Open Logs
+
+2. Double click latest log
+
+3. Open:
+   Debug Only
+
+4. Check:
+   USER_DEBUG
+
+
+========================================
+SAMPLE OUTPUT
+========================================
+
+Email Sent Successfully
+
+OR
+
+Email With Attachment Sent Successfully
+
+
+========================================
+IMPORTANT CLASSES USED
+========================================
+
+1. Messaging.SingleEmailMessage
+   Used to create email.
+
+2. Messaging.sendEmail()
+   Used to send email.
+
+3. Messaging.EmailFileAttachment
+   Used to attach files.
+
+4. Blob.valueOf()
+   Converts text into file format.
+
+
+========================================
+HOW ATTACHMENT WORKS
+========================================
+
+1. Create Attachment Object
+
+2. Set File Name
+
+3. Set File Content
+
+4. Attach File to Email
+
+5. Send Email
+
+
+========================================
+VIVA QUESTIONS
+========================================
+
+1. What is Messaging.SingleEmailMessage?
+   Used to create email in Apex.
+
+2. What is setToAddresses()?
+   Defines recipient email address.
+
+3. What is Blob.valueOf()?
+   Converts string into binary format.
+
+4. What is EmailFileAttachment?
+   Used to attach files in email.
+
+
+========================================
+FINAL COMPONENTS
+========================================
+
+Apex Class:
+EmailServiceProgram
+
+Execution:
+Execute Anonymous Window
+
+========================================

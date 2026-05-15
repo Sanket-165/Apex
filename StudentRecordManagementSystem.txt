@@ -1,0 +1,349 @@
+========================================
+STUDENT RECORD MANAGEMENT SYSTEM
+USING APEX + VISUALFORCE
+========================================
+
+
+OBJECTIVE
+----------------------------------------
+Develop an application in Salesforce using
+Apex and Visualforce to manage student
+records stored in a custom object.
+
+Fields:
+1. Name
+2. Rollno
+3. Class
+4. Mobile No
+
+
+========================================
+STEP 1: CREATE CUSTOM OBJECT
+========================================
+
+1. Login to Salesforce
+
+2. Go to:
+   Setup → Object Manager
+
+3. Click:
+   Create → Custom Object
+
+4. Enter Details:
+
+   Label: Student
+   Plural Label: Students
+   Object Name: Student
+
+5. Click Save
+
+
+========================================
+STEP 2: CREATE FIELDS
+========================================
+
+----------------------------------------
+FIELD 1 : Rollno
+----------------------------------------
+
+1. Open Student Object
+
+2. Go to:
+   Fields & Relationships → New
+
+3. Select:
+   Number
+
+4. Enter:
+
+   Field Label: Rollno
+   Length: 5
+   Decimal Places: 0
+
+5. Save
+
+API NAME:
+Rollno__c
+
+
+----------------------------------------
+FIELD 2 : Class
+----------------------------------------
+
+1. Click New
+
+2. Select:
+   Text
+
+3. Enter:
+
+   Field Label: Class
+   Length: 20
+
+4. Save
+
+API NAME:
+Class__c
+
+
+----------------------------------------
+FIELD 3 : Mobile No
+----------------------------------------
+
+1. Click New
+
+2. Select:
+   Phone
+
+3. Enter:
+
+   Field Label: Mobile No
+
+4. Save
+
+API NAME:
+Mobile_No__c
+
+
+========================================
+STEP 3: CREATE APEX CLASS
+========================================
+
+Go to:
+Setup → Apex Classes → New
+
+CLASS NAME:
+StudentController
+
+
+----------------------------------------
+APEX CODE
+----------------------------------------
+
+public class StudentController {
+
+    public Student__c stu {get; set;}
+
+    public List<Student__c> studentList {get; set;}
+
+    public StudentController() {
+
+        stu = new Student__c();
+
+        loadStudents();
+    }
+
+    // Save Student
+    public void saveStudent() {
+
+        insert stu;
+
+        stu = new Student__c();
+
+        loadStudents();
+    }
+
+    // Display Students
+    public void loadStudents() {
+
+        studentList = [
+
+            SELECT Id,
+                   Name,
+                   Rollno__c,
+                   Class__c,
+                   Mobile_No__c
+
+            FROM Student__c
+            ORDER BY CreatedDate DESC
+        ];
+    }
+
+    // Delete Student
+    public void deleteStudent() {
+
+        Id studentId = ApexPages.currentPage()
+                                .getParameters()
+                                .get('id');
+
+        Student__c s = [
+
+            SELECT Id
+            FROM Student__c
+            WHERE Id = :studentId
+            LIMIT 1
+        ];
+
+        delete s;
+
+        loadStudents();
+    }
+}
+
+
+========================================
+STEP 4: CREATE VISUALFORCE PAGE
+========================================
+
+Go to:
+Setup → Visualforce Pages → New
+
+PAGE NAME:
+StudentPage
+
+
+----------------------------------------
+VISUALFORCE CODE
+----------------------------------------
+
+<apex:page controller="StudentController">
+
+    <apex:form>
+
+        <apex:pageBlock
+            title="Student Record Management System">
+
+            <apex:pageBlockSection columns="1">
+
+                <apex:inputField
+                    value="{!stu.Name}" />
+
+                <apex:inputField
+                    value="{!stu.Rollno__c}" />
+
+                <apex:inputField
+                    value="{!stu.Class__c}" />
+
+                <apex:inputField
+                    value="{!stu.Mobile_No__c}" />
+
+            </apex:pageBlockSection>
+
+            <apex:commandButton
+                value="Save Student"
+                action="{!saveStudent}"
+                rerender="studentTable"/>
+
+        </apex:pageBlock>
+
+        <br/>
+
+        <apex:pageBlock
+            title="Student Records"
+            id="studentTable">
+
+            <apex:pageBlockTable
+                value="{!studentList}"
+                var="s">
+
+                <apex:column
+                    value="{!s.Name}"
+                    headerValue="Name"/>
+
+                <apex:column
+                    value="{!s.Rollno__c}"
+                    headerValue="Rollno"/>
+
+                <apex:column
+                    value="{!s.Class__c}"
+                    headerValue="Class"/>
+
+                <apex:column
+                    value="{!s.Mobile_No__c}"
+                    headerValue="Mobile No"/>
+
+                <apex:column
+                    headerValue="Action">
+
+                    <apex:commandLink
+                        value="Delete"
+                        action="{!deleteStudent}">
+
+                        <apex:param
+                            name="id"
+                            value="{!s.Id}" />
+
+                    </apex:commandLink>
+
+                </apex:column>
+
+            </apex:pageBlockTable>
+
+        </apex:pageBlock>
+
+    </apex:form>
+
+</apex:page>
+
+
+========================================
+STEP 5: RUN PROJECT
+========================================
+
+1. Open Visualforce Page
+
+2. Click:
+   Preview
+
+OR open manually:
+
+https://yourDomain.visualforce.com/apex/StudentPage
+
+
+========================================
+FEATURES
+========================================
+
+1. Add Student
+2. Display Students
+3. Delete Student
+4. Store Data in Salesforce
+
+
+========================================
+IMPORTANT API NAMES
+========================================
+
+Student Object:
+Student__c
+
+Fields:
+Rollno__c
+Class__c
+Mobile_No__c
+
+
+========================================
+VIVA QUESTIONS
+========================================
+
+1. What is Apex?
+   Apex is Salesforce backend programming
+   language.
+
+2. What is Visualforce?
+   Visualforce is a frontend framework used
+   to create UI pages in Salesforce.
+
+3. What is a Custom Object?
+   A custom database table created by users.
+
+4. What is rerender?
+   Used to refresh a component without
+   reloading entire page.
+
+
+========================================
+FINAL COMPONENTS
+========================================
+
+Custom Object:
+Student
+
+Apex Class:
+StudentController
+
+Visualforce Page:
+StudentPage
+
+========================================

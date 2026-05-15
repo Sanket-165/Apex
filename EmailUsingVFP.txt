@@ -1,0 +1,342 @@
+========================================
+EMAIL NOTIFICATION SYSTEM
+USING APEX + VISUALFORCE
+========================================
+
+
+OBJECTIVE
+----------------------------------------
+Develop an Apex program that sends email
+notifications using Salesforce Email
+Services.
+
+Features:
+1. Recipient Email
+2. Subject
+3. Message Body
+4. Send Email
+5. Send Email with Attachment
+6. Invalid Email Validation
+7. Frontend using Visualforce
+
+
+========================================
+STEP 1: CREATE APEX CLASS
+========================================
+
+Go to:
+
+Setup → Apex Classes → New
+
+CLASS NAME:
+EmailController
+
+
+----------------------------------------
+APEX CODE
+----------------------------------------
+
+public class EmailController {
+
+    // Form Fields
+    public String recipientEmail {get; set;}
+
+    public String subjectText {get; set;}
+
+    public String bodyText {get; set;}
+
+    // File Upload
+    public Blob uploadedFile {get; set;}
+
+    public String fileName {get; set;}
+
+
+    // Send Email Method
+    public PageReference sendEmail() {
+
+        // Validate Email
+        if(recipientEmail == null ||
+
+           !recipientEmail.contains('@') ||
+
+           !recipientEmail.contains('.')) {
+
+            ApexPages.addMessage(
+
+                new ApexPages.Message(
+
+                    ApexPages.Severity.ERROR,
+
+                    'Invalid Email ID'
+                )
+            );
+
+            return null;
+        }
+
+        try {
+
+            // Create Email Object
+            Messaging.SingleEmailMessage mail =
+
+                new Messaging.SingleEmailMessage();
+
+            // Recipient
+            mail.setToAddresses(
+
+                new List<String>{
+                    recipientEmail
+                }
+            );
+
+            // Subject
+            mail.setSubject(subjectText);
+
+            // Message Body
+            mail.setPlainTextBody(bodyText);
+
+
+            // Add Attachment
+            if(uploadedFile != null) {
+
+                Messaging.EmailFileAttachment
+                    attachment =
+
+                    new Messaging.EmailFileAttachment();
+
+                attachment.setFileName(fileName);
+
+                attachment.setBody(uploadedFile);
+
+                mail.setFileAttachments(
+
+                    new Messaging.EmailFileAttachment[] {
+
+                        attachment
+                    }
+                );
+            }
+
+            // Send Email
+            Messaging.sendEmail(
+
+                new Messaging.SingleEmailMessage[] {
+                    mail
+                }
+            );
+
+            ApexPages.addMessage(
+
+                new ApexPages.Message(
+
+                    ApexPages.Severity.CONFIRM,
+
+                    'Email Sent Successfully'
+                )
+            );
+        }
+
+        catch(Exception e) {
+
+            ApexPages.addMessage(
+
+                new ApexPages.Message(
+
+                    ApexPages.Severity.ERROR,
+
+                    e.getMessage()
+                )
+            );
+        }
+
+        return null;
+    }
+}
+
+
+========================================
+STEP 2: CREATE VISUALFORCE PAGE
+========================================
+
+Go to:
+
+Setup → Visualforce Pages → New
+
+PAGE NAME:
+EmailPage
+
+
+----------------------------------------
+VISUALFORCE CODE
+----------------------------------------
+
+<apex:page controller="EmailController">
+
+    <apex:form
+        enctype="multipart/form-data">
+
+        <apex:pageMessages />
+
+        <apex:pageBlock
+            title="Email Notification System">
+
+            <apex:pageBlockSection columns="1">
+
+                <!-- Recipient Email -->
+                <apex:inputText
+                    value="{!recipientEmail}"
+                    label="Recipient Email"/>
+
+                <!-- Subject -->
+                <apex:inputText
+                    value="{!subjectText}"
+                    label="Subject"/>
+
+                <!-- Message Body -->
+                <apex:inputTextarea
+                    value="{!bodyText}"
+                    label="Message Body"
+                    rows="5"
+                    cols="50"/>
+
+                <!-- File Upload -->
+                <apex:inputFile
+                    value="{!uploadedFile}"
+                    filename="{!fileName}"/>
+
+            </apex:pageBlockSection>
+
+            <!-- Send Button -->
+            <apex:commandButton
+                value="Send Email"
+                action="{!sendEmail}"/>
+
+        </apex:pageBlock>
+
+    </apex:form>
+
+</apex:page>
+
+
+========================================
+STEP 3: RUN PROJECT
+========================================
+
+1. Open Visualforce Page
+
+2. Click:
+   Preview
+
+OR open manually:
+
+https://yourDomain.visualforce.com
+/apex/EmailPage
+
+
+========================================
+FEATURES
+========================================
+
+1. Send Email
+2. Upload Attachment
+3. Invalid Email Validation
+4. Success/Error Messages
+5. Frontend using Visualforce
+
+
+========================================
+INVALID EMAIL VALIDATION
+========================================
+
+If user enters invalid email like:
+
+abc
+
+Message displayed:
+
+Invalid Email ID
+
+
+========================================
+SUCCESS MESSAGE
+========================================
+
+If email is valid:
+
+Email Sent Successfully
+
+
+========================================
+HOW ATTACHMENT WORKS
+========================================
+
+1. User uploads file using:
+   apex:inputFile
+
+2. File stored in:
+   Blob format
+
+3. File attached using:
+   Messaging.EmailFileAttachment
+
+
+========================================
+IMPORTANT TAGS & CLASSES
+========================================
+
+1. apex:inputFile
+   Used to upload file.
+
+2. Messaging.SingleEmailMessage
+   Used to create email.
+
+3. Messaging.sendEmail()
+   Used to send email.
+
+4. Messaging.EmailFileAttachment
+   Used for attachment.
+
+5. ApexPages.addMessage()
+   Used to display messages.
+
+
+========================================
+IMPORTANT LINE
+========================================
+
+<apex:form enctype="multipart/form-data">
+
+Required for file upload support.
+
+
+========================================
+VIVA QUESTIONS
+========================================
+
+1. What is Visualforce?
+   Salesforce frontend framework.
+
+2. What is Apex?
+   Salesforce backend programming language.
+
+3. What is Blob?
+   Binary representation of uploaded file.
+
+4. Why use ApexPages.addMessage()?
+   To display success/error messages.
+
+5. How is invalid email validated?
+   Using contains('@') and contains('.')
+
+
+========================================
+FINAL COMPONENTS
+========================================
+
+Apex Class:
+EmailController
+
+Visualforce Page:
+EmailPage
+
+========================================
