@@ -11,7 +11,6 @@ void primsMST(int V, vector<vector<pair<int,int>>>& adj) {
     > pq;
 
     vector<int> key(V, INT_MAX);
-    vector<int> parent(V, -1);
     vector<bool> inMST(V, false);
 
     // Start from node 0
@@ -35,7 +34,7 @@ void primsMST(int V, vector<vector<pair<int,int>>>& adj) {
             // If v not in MST and weight is smaller
             if (!inMST[v] && wt < key[v]) {
                 key[v] = wt;
-                parent[v] = u;
+                
 
                 pq.push({key[v], v});
             }
@@ -44,11 +43,9 @@ void primsMST(int V, vector<vector<pair<int,int>>>& adj) {
 
     int totalWeight = 0;
 
-    cout << "Edges in MST:\n";
+
 
     for (int i = 1; i < V; i++) {
-        cout << parent[i] << " - " << i
-             << "  weight: " << key[i] << endl;
 
         totalWeight += key[i];
     }
