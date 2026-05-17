@@ -13,12 +13,16 @@
             padding: 0;
         }
 
-        
+        .home {
+            padding: 30px 10px;
+        }
+
         .chat-container {
             width: 400px;
+            max-width: 90%;
             background-color: white;
             margin: auto;
-            border: 1px solid black;
+            border: 1px solid lightgray;
             padding: 10px;
             border-radius: 10px;
         }
@@ -62,7 +66,7 @@
         }
 
         input {
-            
+            width: 65%;
             padding: 8px;
             border: 1px solid gray;
             border-radius: 5px;
@@ -72,11 +76,14 @@
             padding: 8px 15px;
             background-color: red;
             color: white;
+            border: none;
             border-radius: 5px;
             cursor: pointer;
         }
 
-       
+        button:hover {
+            background-color: darkred;
+        }
     </style>
 </head>
 
@@ -110,7 +117,6 @@
         function sendMessage() {
 
             let input = document.getElementById("userInput");
-            
             let message = input.value.trim();
 
             if (message === "") return;
@@ -119,8 +125,9 @@
 
             let response = getResponse(message.toLowerCase());
 
-            displayMessage(response, "bot-message");
-
+            setTimeout(() => {
+                displayMessage(response, "bot-message");
+            }, 500);
 
             input.value = "";
         }
@@ -137,6 +144,14 @@
 
             chatbox.scrollTop = chatbox.scrollHeight;
         }
+
+        document.getElementById("userInput")
+            .addEventListener("keypress", function(event) {
+
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
 
         function getResponse(message) {
 
