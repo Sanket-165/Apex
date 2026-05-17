@@ -1,0 +1,512 @@
+SALESFORCE COLLEGE MANAGEMENT LIGHTNING APPLICATION
+(Without VS Code)
+
+============================================================
+
+AIM
+
+Develop a College Management Lightning Application in Salesforce to store and manage student and faculty records with validation rules to ensure data accuracy.
+
+============================================================
+
+REQUIREMENTS
+
+Validation for Students:
+
+1. Marks should be between 0 and 100.
+2. Roll Number must be greater than 0.
+3. Email must contain @ symbol.
+4. Student name cannot be blank.
+
+Validation for Faculty:
+
+1. Faculty Name cannot be empty and must contain at least 3 characters.
+2. Faculty ID must be greater than 0 and unique.
+3. Salary must be between 10,000 and 500,000.
+4. Department must be selected.
+5. Joining Date cannot be a future date.
+
+============================================================
+
+STEP 1 — LOGIN TO SALESFORCE
+
+Open:
+[https://login.salesforce.com](https://login.salesforce.com)
+
+Login using your Salesforce Developer Account.
+
+============================================================
+
+STEP 2 — CREATE STUDENT OBJECT
+
+Go to:
+
+Setup → Object Manager
+
+Click:
+
+Create → Custom Object
+
+Fill:
+
+Label: Student
+Plural Label: Students
+Object Name: Student
+Record Name: Student Name
+
+Click Save.
+
+============================================================
+
+STEP 3 — CREATE STUDENT FIELDS
+
+Inside Student Object:
+
+Fields & Relationships → New
+
+Create the following fields:
+
+---
+
+## FIELD 1 — Student Name
+
+Type: Text
+Label: Student Name
+
+---
+
+## FIELD 2 — Roll Number
+
+Type: Number
+Label: Roll Number
+Length: 10
+Decimal Places: 0
+
+---
+
+## FIELD 3 — Email
+
+Type: Email
+Label: Email
+
+---
+
+## FIELD 4 — Marks
+
+Type: Number
+Label: Marks
+Length: 3
+Decimal Places: 0
+
+============================================================
+
+STEP 4 — CREATE STUDENT VALIDATION RULES
+
+Go to:
+
+Student → Validation Rules → New
+
+---
+
+## VALIDATION 1 — Marks Between 0 and 100
+
+Rule Name:
+Marks_Validation
+
+Formula:
+
+OR(
+Marks__c < 0,
+Marks__c > 100
+)
+
+Error Message:
+Marks should be between 0 and 100.
+
+Click Save.
+
+---
+
+## VALIDATION 2 — Roll Number Greater Than 0
+
+Rule Name:
+RollNumber_Validation
+
+Formula:
+
+Roll_Number__c <= 0
+
+Error Message:
+Roll Number must be greater than 0.
+
+Click Save.
+
+---
+
+## VALIDATION 3 — Student Name Cannot Be Blank
+
+Rule Name:
+StudentName_Validation
+
+Formula:
+
+ISBLANK(Student_Name__c)
+
+Error Message:
+Student name cannot be blank.
+
+Click Save.
+
+============================================================
+
+STEP 5 — CREATE FACULTY OBJECT
+
+Go to:
+
+Setup → Object Manager → Create → Custom Object
+
+Fill:
+
+Label: Faculty
+Plural Label: Faculties
+Object Name: Faculty
+Record Name: Faculty Name
+
+Click Save.
+
+============================================================
+
+STEP 6 — CREATE FACULTY FIELDS
+
+Inside Faculty Object:
+
+Fields & Relationships → New
+
+Create the following fields:
+
+---
+
+## FIELD 1 — Faculty Name
+
+Type: Text
+Label: Faculty Name
+
+---
+
+## FIELD 2 — Faculty ID
+
+Type: Number
+Label: Faculty ID
+Unique: TRUE
+
+---
+
+## FIELD 3 — Salary
+
+Type: Currency
+Label: Salary
+
+---
+
+## FIELD 4 — Department
+
+Type: Picklist
+Label: Department
+
+Picklist Values:
+
+Computer
+Mechanical
+Civil
+Electrical
+IT
+ENTC
+
+---
+
+## FIELD 5 — Joining Date
+
+Type: Date
+Label: Joining Date
+
+============================================================
+
+STEP 7 — CREATE FACULTY VALIDATION RULES
+
+Go to:
+
+Faculty → Validation Rules → New
+
+---
+
+## VALIDATION 1 — Faculty Name Minimum 3 Characters
+
+Rule Name:
+FacultyName_Validation
+
+Formula:
+
+LEN(Faculty_Name__c) < 3
+
+Error Message:
+Faculty name must contain at least 3 characters.
+
+Click Save.
+
+---
+
+## VALIDATION 2 — Faculty ID Greater Than 0
+
+Formula:
+
+Faculty_ID__c <= 0
+
+Error Message:
+Faculty ID must be greater than 0.
+
+Click Save.
+
+---
+
+## VALIDATION 3 — Salary Between 10,000 and 500,000
+
+Formula:
+
+OR(
+Salary__c < 10000,
+Salary__c > 500000
+)
+
+Error Message:
+Salary must be between 10,000 and 500,000.
+
+Click Save.
+
+---
+
+## VALIDATION 4 — Joining Date Cannot Be Future Date
+
+Formula:
+
+Joining_Date__c > TODAY()
+
+Error Message:
+Joining Date cannot be a future date.
+
+Click Save.
+
+============================================================
+
+STEP 8 — CREATE TABS
+
+Go to:
+
+Setup → Tabs
+
+Under:
+
+Custom Object Tabs
+
+Create tabs for:
+
+1. Student
+2. Faculty
+
+Choose any icon and style.
+
+============================================================
+
+STEP 9 — CREATE LIGHTNING APP
+
+Go to:
+
+Setup → App Manager
+
+Click:
+
+New Lightning App
+
+Fill:
+
+App Name: College Management App
+
+Click Next.
+
+============================================================
+
+STEP 10 — ADD TABS TO APP
+
+Add the following tabs:
+
+1. Students
+2. Faculties
+
+Click:
+
+Next → Save → Finish
+
+============================================================
+
+STEP 11 — OPEN APPLICATION
+
+Click:
+
+App Launcher (9 dots)
+
+Open:
+
+College Management App
+
+============================================================
+
+STEP 12 — TEST VALIDATIONS
+
+Try entering invalid data.
+
+---
+
+## TEST CASES
+
+Marks = 150
+Expected Result:
+Validation Error
+
+---
+
+Roll Number = -1
+Expected Result:
+Validation Error
+
+---
+
+Faculty Name = AB
+Expected Result:
+Validation Error
+
+---
+
+Salary = 700000
+Expected Result:
+Validation Error
+
+---
+
+Future Joining Date
+Expected Result:
+Validation Error
+
+============================================================
+
+EXPECTED OUTPUT
+
+1. Student Management Module created successfully.
+2. Faculty Management Module created successfully.
+3. Validation rules working properly.
+4. Lightning Application working successfully.
+5. Error messages displayed for invalid data.
+
+============================================================
+
+VIVA QUESTIONS
+
+Q1. What are Validation Rules?
+Validation Rules ensure only valid data is saved into Salesforce objects.
+
+Q2. Why use Picklist fields?
+Picklists restrict users to predefined values.
+
+Q3. Why make Faculty ID unique?
+To prevent duplicate faculty records.
+
+Q4. What is a Lightning App?
+A Lightning App is a collection of tabs, objects, and pages used together in Salesforce.
+
+============================================================
+
+CONCLUSION
+
+A College Management Lightning Application was successfully developed in Salesforce using Custom Objects, Validation Rules, Tabs, and Lightning App Builder without using VS Code or Apex. The application validates student and faculty data before saving records, ensuring data accuracy and integrity.
+
+
+
+Some Rules
+
+
+STUDENT VALIDATION RULES
+
+1. Marks should be between 0 and 100
+
+Formula:
+OR(
+    Marks__c < 0,
+    Marks__c > 100
+)
+
+------------------------------------------------------------
+
+2. Roll Number must be greater than 0
+
+Formula:
+Roll_Number__c <= 0
+
+------------------------------------------------------------
+
+3. Email must contain @ symbol
+
+Formula:
+NOT(CONTAINS(Email__c, "@"))
+
+------------------------------------------------------------
+
+4. Student Name cannot be blank
+
+Formula:
+ISBLANK(Student_Name__c)
+
+============================================================
+
+FACULTY VALIDATION RULES
+
+1. Faculty Name must contain at least 3 characters
+
+Formula:
+LEN(Faculty_Name__c) < 3
+
+------------------------------------------------------------
+
+2. Faculty ID must be greater than 0
+
+Formula:
+Faculty_ID__c <= 0
+
+------------------------------------------------------------
+
+3. Faculty ID should be unique
+
+Enable:
+Unique = TRUE
+inside Faculty_ID__c field settings
+
+------------------------------------------------------------
+
+4. Salary must be between 10,000 and 500,000
+
+Formula:
+OR(
+    Salary__c < 10000,
+    Salary__c > 500000
+)
+
+------------------------------------------------------------
+
+5. Department must be selected
+
+Formula:
+ISBLANK(TEXT(Department__c))
+
+------------------------------------------------------------
+
+6. Joining Date cannot be future date
+
+Formula:
+Joining_Date__c > TODAY()
