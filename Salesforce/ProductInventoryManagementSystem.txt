@@ -1,0 +1,350 @@
+========================================
+PRODUCT INVENTORY MANAGEMENT SYSTEM
+USING APEX + VISUALFORCE
+========================================
+
+
+OBJECTIVE
+----------------------------------------
+Develop an application in Salesforce using
+Apex and Visualforce to manage Product
+Inventory records stored in a custom object.
+
+Fields:
+1. Product Name
+2. Serial No
+3. Manufacture Date
+4. Expiry Date
+
+
+========================================
+STEP 1: CREATE CUSTOM OBJECT
+========================================
+
+1. Login to Salesforce
+
+2. Go to:
+   Setup → Object Manager
+
+3. Click:
+   Create → Custom Object
+
+4. Enter Details:
+
+   Label: Product Inventory
+   Plural Label: Product Inventories
+   Object Name: Product_Inventory
+
+5. Click Save
+
+
+========================================
+STEP 2: CREATE FIELDS
+========================================
+
+----------------------------------------
+FIELD 1 : Serial No
+----------------------------------------
+
+1. Open Product Inventory Object
+
+2. Go to:
+   Fields & Relationships → New
+
+3. Select:
+   Number
+
+4. Enter:
+
+   Field Label: Serial No
+   Length: 10
+   Decimal Places: 0
+
+5. Save
+
+API NAME:
+Serial_No__c
+
+
+----------------------------------------
+FIELD 2 : Manufacture Date
+----------------------------------------
+
+1. Click New
+
+2. Select:
+   Date
+
+3. Enter:
+
+   Field Label: Manufacture Date
+
+4. Save
+
+API NAME:
+Manufacture_Date__c
+
+
+----------------------------------------
+FIELD 3 : Expiry Date
+----------------------------------------
+
+1. Click New
+
+2. Select:
+   Date
+
+3. Enter:
+
+   Field Label: Expiry Date
+
+4. Save
+
+API NAME:
+Expiry_Date__c
+
+
+========================================
+STEP 3: CREATE APEX CLASS
+========================================
+
+Go to:
+Setup → Apex Classes → New
+
+CLASS NAME:
+ProductInventoryController
+
+
+----------------------------------------
+APEX CODE
+----------------------------------------
+
+public class ProductInventoryController {
+
+    public Product_Inventory__c prod {get; set;}
+
+    public List<Product_Inventory__c>
+        productList {get; set;}
+
+    public ProductInventoryController() {
+
+        prod = new Product_Inventory__c();
+
+        loadProducts();
+    }
+
+    // Save Product
+    public void saveProduct() {
+
+        insert prod;
+
+        prod = new Product_Inventory__c();
+
+        loadProducts();
+    }
+
+    // Display Products
+    public void loadProducts() {
+
+        productList = [
+
+            SELECT Id,
+                   Name,
+                   Serial_No__c,
+                   Manufacture_Date__c,
+                   Expiry_Date__c
+
+            FROM Product_Inventory__c
+            ORDER BY CreatedDate DESC
+        ];
+    }
+
+    // Delete Product
+    public void deleteProduct() {
+
+        Id productId = ApexPages.currentPage()
+                                .getParameters()
+                                .get('id');
+
+        Product_Inventory__c p = [
+
+            SELECT Id
+            FROM Product_Inventory__c
+            WHERE Id = :productId
+            LIMIT 1
+        ];
+
+        delete p;
+
+        loadProducts();
+    }
+}
+
+
+========================================
+STEP 4: CREATE VISUALFORCE PAGE
+========================================
+
+Go to:
+Setup → Visualforce Pages → New
+
+PAGE NAME:
+ProductInventoryPage
+
+
+----------------------------------------
+VISUALFORCE CODE
+----------------------------------------
+
+<apex:page
+    controller="ProductInventoryController">
+
+    <apex:form>
+
+        <apex:pageBlock
+            title="Product Inventory Management System">
+
+            <apex:pageBlockSection columns="1">
+
+                <apex:inputField
+                    value="{!prod.Name}" />
+
+                <apex:inputField
+                    value="{!prod.Serial_No__c}" />
+
+                <apex:inputField
+                    value="{!prod.Manufacture_Date__c}" />
+
+                <apex:inputField
+                    value="{!prod.Expiry_Date__c}" />
+
+            </apex:pageBlockSection>
+
+            <apex:commandButton
+                value="Save Product"
+                action="{!saveProduct}"
+                rerender="productTable"/>
+
+        </apex:pageBlock>
+
+        <br/>
+
+        <apex:pageBlock
+            title="Product Records"
+            id="productTable">
+
+            <apex:pageBlockTable
+                value="{!productList}"
+                var="p">
+
+                <apex:column
+                    value="{!p.Name}"
+                    headerValue="Product Name"/>
+
+                <apex:column
+                    value="{!p.Serial_No__c}"
+                    headerValue="Serial No"/>
+
+                <apex:column
+                    value="{!p.Manufacture_Date__c}"
+                    headerValue="Manufacture Date"/>
+
+                <apex:column
+                    value="{!p.Expiry_Date__c}"
+                    headerValue="Expiry Date"/>
+
+                <apex:column
+                    headerValue="Action">
+
+                    <apex:commandLink
+                        value="Delete"
+                        action="{!deleteProduct}">
+
+                        <apex:param
+                            name="id"
+                            value="{!p.Id}" />
+
+                    </apex:commandLink>
+
+                </apex:column>
+
+            </apex:pageBlockTable>
+
+        </apex:pageBlock>
+
+    </apex:form>
+
+</apex:page>
+
+
+========================================
+STEP 5: RUN PROJECT
+========================================
+
+1. Open Visualforce Page
+
+2. Click:
+   Preview
+
+OR open manually:
+
+https://yourDomain.visualforce.com
+/apex/ProductInventoryPage
+
+
+========================================
+FEATURES
+========================================
+
+1. Add Product
+2. Display Products
+3. Delete Product
+4. Store Data in Salesforce
+
+
+========================================
+IMPORTANT API NAMES
+========================================
+
+Object:
+Product_Inventory__c
+
+Fields:
+Serial_No__c
+Manufacture_Date__c
+Expiry_Date__c
+
+
+========================================
+VIVA QUESTIONS
+========================================
+
+1. What is Apex?
+   Apex is Salesforce backend programming
+   language.
+
+2. What is Visualforce?
+   Visualforce is Salesforce frontend
+   framework.
+
+3. What is a Custom Object?
+   A user-created database table.
+
+4. What is rerender?
+   Used to refresh components dynamically.
+
+
+========================================
+FINAL COMPONENTS
+========================================
+
+Custom Object:
+Product Inventory
+
+Apex Class:
+ProductInventoryController
+
+Visualforce Page:
+ProductInventoryPage
+
+========================================

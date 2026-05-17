@@ -1,0 +1,310 @@
+SECURE FILE SHARING BETWEEN AZURE VIRTUAL MACHINES IN DIFFERENT SUBNETS
+
+============================================================
+
+## AIM
+
+Create two Azure Virtual Machines in different subnets of the same Virtual Network and securely transfer files between them using SSH/SCP.
+
+---
+
+STEP 1 - CREATE RESOURCE GROUP
+
+1. Open Azure Portal:
+   [https://portal.azure.com](https://portal.azure.com)
+
+2. Search:
+   Resource Groups
+
+3. Click:
+   Create
+
+4. Enter:
+   Resource Group Name: SecureTransferRG
+   Region: Nearest Region
+
+5. Click:
+   Review + Create → Create
+
+---
+
+STEP 2 - CREATE VIRTUAL NETWORK (VNET)
+
+1. Search:
+   Virtual Networks
+
+2. Click:
+   Create
+
+3. Enter:
+   Name: SecureVNet
+   Address Space: 10.0.0.0/16
+   Resource Group: SecureTransferRG
+
+---
+
+STEP 3 - CREATE SUBNETS
+
+Create Subnet 1:
+
+Name: FrontendSubnet
+Address Range: 10.0.1.0/24
+
+Create Subnet 2:
+
+Name: BackendSubnet
+Address Range: 10.0.2.0/24
+
+Click:
+Review + Create → Create
+
+---
+
+STEP 4 - CREATE SENDERVM
+
+1. Go to:
+   Virtual Machines
+
+2. Click:
+   Create → Azure Virtual Machine
+
+3. Enter:
+
+VM Name: SenderVM
+Image: Ubuntu Server 22.04 LTS
+Size: Standard B1s
+Username: azureuser
+Authentication Type: SSH Public Key
+
+4. Choose:
+   Generate new key pair
+
+5. Networking:
+
+Virtual Network: SecureVNet
+Subnet: FrontendSubnet
+Public IP: Enable
+
+Allow inbound port:
+SSH (22)
+
+6. Click:
+   Review + Create → Create
+
+7. Download:
+   SenderVM_key.pem
+
+---
+
+STEP 5 - CREATE RECEIVERVM
+
+Repeat same process.
+
+Enter:
+
+VM Name: ReceiverVM
+Image: Ubuntu Server 22.04 LTS
+Username: azureuser
+
+Networking:
+
+Virtual Network: SecureVNet
+Subnet: BackendSubnet
+Public IP: Enable
+
+Allow:
+SSH (22)
+
+Download:
+ReceiverVM_key.pem
+
+---
+
+STEP 6 - CHECK PRIVATE IP ADDRESSES
+
+Go to:
+VM → Networking
+
+Example:
+
+SenderVM → 10.0.1.4
+ReceiverVM → 10.0.2.4
+
+---
+
+STEP 7 - SETUP PEM FILES IN WSL
+
+
+Give permissions:
+
+chmod 400 ~/SenderVM_key.pem
+chmod 400 ~/ReceiverVM_key.pem
+
+---
+
+STEP 8 - CONNECT TO SENDERVM
+
+ssh -i ~/SenderVM_key.pem azureuser@PUBLIC_IP_OF_SENDERVM
+
+Example:
+
+ssh -i ~/SenderVM_key.pem [azureuser@20.xx.xx.xx](mailto:azureuser@20.xx.xx.xx)
+
+---
+
+STEP 9 - VERIFY COMMUNICATION
+
+Inside SenderVM:
+
+ping 10.0.2.4
+
+If ping works, communication between subnets is successful.
+
+Press:
+CTRL + C
+
+to stop ping.
+
+---
+
+STEP 10 - CREATE SAMPLE FILE
+
+Inside SenderVM:
+
+nano sample.txt
+
+Add:
+
+This file is securely transferred between Azure virtual machines.
+
+Save:
+CTRL + X
+Y
+ENTER
+
+---
+
+STEP 11 - COPY RECEIVERVM KEY INTO SENDERVM
+
+Open another LOCAL WSL terminal.
+
+Run:
+
+scp -i ~/SenderVM_key.pem ~/ReceiverVM_key.pem azureuser@PUBLIC_IP_OF_SENDERVM:/home/azureuser/
+
+---
+
+STEP 12 - SET PERMISSION FOR RECEIVERVM KEY
+
+Inside SenderVM:
+
+chmod 400 ~/ReceiverVM_key.pem
+
+---
+
+STEP 13 - TRANSFER FILE SECURELY
+
+Inside SenderVM:
+
+scp -i ~/ReceiverVM_key.pem sample.txt azureuser@10.0.2.4:/home/azureuser/
+
+Type:
+yes
+if prompted.
+
+---
+
+STEP 14 - VERIFY FILE ON RECEIVERVM
+
+From LOCAL WSL terminal:
+
+ssh -i ~/ReceiverVM_key.pem azureuser@PUBLIC_IP_OF_RECEIVERVM
+
+Check file:
+
+ls
+
+Read file:
+
+cat sample.txt
+
+---
+
+STEP 15 - CONFIGURE FILE PERMISSIONS
+
+Inside ReceiverVM:
+
+chmod 600 sample.txt
+
+Verify:
+
+ls -l sample.txt
+
+Expected:
+-rw-------
+
+---
+
+STEP 16 - VERIFY NSG RULES
+
+Go to:
+VM → Networking
+
+Ensure inbound rule allows:
+
+Port 22 → SSH/SCP
+
+---
+
+IMPORTANT COMMANDS
+
+SSH Login:
+
+ssh -i ~/SenderVM_key.pem azureuser@PUBLIC_IP
+
+Ping Internal VM:
+
+ping PRIVATE_IP
+
+Secure File Transfer:
+
+scp -i ~/ReceiverVM_key.pem sample.txt azureuser@PRIVATE_IP:/home/azureuser/
+
+Change File Permission:
+
+chmod 600 sample.txt
+
+---
+
+EXPECTED OUTPUT
+
+1. Two Azure VMs created
+2. VMs placed in different subnets
+3. Internal communication established
+4. File transferred securely using SCP
+5. Access permissions configured properly
+
+---
+
+VIVA QUESTIONS
+
+Q1. Can VMs in different subnets communicate?
+Yes, if both subnets belong to the same Virtual Network.
+
+Q2. Why use SCP?
+SCP securely transfers files using SSH encryption.
+
+Q3. Why use private IP?
+Private IP keeps communication internal and secure.
+
+Q4. What does chmod 600 do?
+Only owner gets read/write permission.
+
+Q5. Why use subnets?
+Subnets improve organization and security.
+
+---
+
+CONCLUSION
+
+A secure file sharing system was implemented using Azure Virtual Machines in different subnets. Secure communication and encrypted file transfer were achieved using SSH and SCP with proper file permissions.

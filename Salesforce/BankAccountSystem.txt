@@ -16,11 +16,13 @@ The system manages customer records:
 3. Email
 4. Birth Date
 5. Account Type
+6. Balance
 
 Operations:
 1. Add Customer
 2. Display Customers
-3. Delete Customer
+3. Update Customer
+4. Delete Customer
 
 
 ========================================
@@ -130,6 +132,27 @@ API NAME:
 Account_Type__c
 
 
+----------------------------------------
+FIELD 5 : Balance
+----------------------------------------
+
+1. Click New
+
+2. Select:
+   Currency
+
+3. Enter:
+
+   Field Label: Balance
+   Length: 16
+   Decimal Places: 2
+
+4. Save
+
+API NAME:
+Balance__c
+
+
 ========================================
 STEP 3: CREATE APEX CLASS
 ========================================
@@ -154,7 +177,8 @@ public class BankAccountSystem {
         String customerName,
         String email,
         Date birthDate,
-        String accountType
+        String accountType,
+        Decimal balance
     ) {
 
         Customer__c cust = new Customer__c();
@@ -164,6 +188,7 @@ public class BankAccountSystem {
         cust.Email__c = email;
         cust.Birth_Date__c = birthDate;
         cust.Account_Type__c = accountType;
+        cust.Balance__c = balance;
 
         insert cust;
 
@@ -183,7 +208,8 @@ public class BankAccountSystem {
                    Customer_ID__c,
                    Email__c,
                    Birth_Date__c,
-                   Account_Type__c
+                   Account_Type__c,
+                   Balance__c
 
             FROM Customer__c
         ];
@@ -209,9 +235,47 @@ public class BankAccountSystem {
                 cust.Birth_Date__c +
 
                 ' | Account Type: ' +
-                cust.Account_Type__c
+                cust.Account_Type__c +
+
+                ' | Balance: ' +
+                cust.Balance__c
             );
         }
+    }
+
+
+    // Update Customer
+    public static void updateCustomer(
+
+        Integer customerId,
+        String newEmail,
+        String newAccountType,
+        Decimal newBalance
+    ) {
+
+        Customer__c cust = [
+
+            SELECT Id,
+                   Email__c,
+                   Account_Type__c,
+                   Balance__c
+
+            FROM Customer__c
+
+            WHERE Customer_ID__c = :customerId
+
+            LIMIT 1
+        ];
+
+        cust.Email__c = newEmail;
+        cust.Account_Type__c = newAccountType;
+        cust.Balance__c = newBalance;
+
+        update cust;
+
+        System.debug(
+            'Customer Updated Successfully'
+        );
     }
 
 
@@ -273,7 +337,8 @@ BankAccountSystem.addCustomer(
     'Sanket',
     'sanket@gmail.com',
     Date.newInstance(2005,2,21),
-    'Savings'
+    'Savings',
+    50000
 );
 
 
@@ -285,7 +350,20 @@ BankAccountSystem.displayCustomers();
 
 
 ----------------------------------------
-3. DELETE CUSTOMER
+3. UPDATE CUSTOMER
+----------------------------------------
+
+BankAccountSystem.updateCustomer(
+
+    101,
+    'newmail@gmail.com',
+    'Current',
+    75000
+);
+
+
+----------------------------------------
+4. DELETE CUSTOMER
 ----------------------------------------
 
 Delete customer with Customer ID = 101
@@ -319,6 +397,7 @@ Name: Sanket
 Email: sanket@gmail.com
 Birth Date: 2005-02-21
 Account Type: Savings
+Balance: 50000
 
 
 ========================================
@@ -333,6 +412,7 @@ Customer_ID__c
 Email__c
 Birth_Date__c
 Account_Type__c
+Balance__c
 
 
 ========================================

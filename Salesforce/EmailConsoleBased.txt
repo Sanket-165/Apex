@@ -117,8 +117,7 @@ EmailServiceProgram.sendEmail(
 
     'Salesforce Email Test',
 
-    'Hello Sanket, this email is sent
-     using Apex.'
+    'Hello Sanket, this email is sent using Apex.'
 );
 
 
@@ -134,7 +133,7 @@ WITH ATTACHMENT
 APEX CODE
 ----------------------------------------
 
-public class EmailServiceProgram {
+public class EmailServiceProgramAttachment {
 
     // Send Email With Attachment
     public static void sendEmailWithAttachment(
@@ -177,8 +176,7 @@ public class EmailServiceProgram {
 
             Blob.valueOf(
 
-                'This is sample attachment
-                 content.'
+                'This is sample attachment content.'
             )
         );
 
@@ -210,7 +208,7 @@ public class EmailServiceProgram {
 STEP 4: EXECUTE ATTACHMENT PROGRAM
 ========================================
 
-EmailServiceProgram.sendEmailWithAttachment(
+EmailServiceProgramAttachment.sendEmailWithAttachment(
 
     'sanket@gmail.com',
 

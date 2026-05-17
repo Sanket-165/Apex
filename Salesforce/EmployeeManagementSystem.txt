@@ -6,7 +6,7 @@ USING CONSOLE-BASED APEX
 
 OBJECTIVE
 ----------------------------------------
-Develop a menu-driven Employee Management
+Develop an Employee Management
 System in Salesforce using Apex.
 
 The system manages employee records:
@@ -20,7 +20,8 @@ The system manages employee records:
 Operations:
 1. Add Employee
 2. Display Employees
-3. Delete Employee
+3. Update Employee
+4. Delete Employee
 
 
 ========================================
@@ -147,10 +148,9 @@ APEX CODE
 
 public class EmployeeManagementSystem {
 
-    // Menu Method
-    public static void menu(
+    // Add Employee
+    public static void addEmployee(
 
-        Integer choice,
         Integer empId,
         String empName,
         String email,
@@ -158,84 +158,111 @@ public class EmployeeManagementSystem {
         String department
     ) {
 
-        // 1. Add Employee
-        if(choice == 1) {
+        Employee__c emp = new Employee__c();
 
-            Employee__c emp = new Employee__c();
+        emp.Emp_ID__c = empId;
+        emp.Name = empName;
+        emp.Email__c = email;
+        emp.Birth_Date__c = birthDate;
+        emp.Department__c = department;
 
-            emp.Emp_ID__c = empId;
-            emp.Name = empName;
-            emp.Email__c = email;
-            emp.Birth_Date__c = birthDate;
-            emp.Department__c = department;
+        insert emp;
 
-            insert emp;
+        System.debug(
+            'Employee Added Successfully'
+        );
+    }
 
-            System.debug(
-                'Employee Added Successfully'
-            );
-        }
 
-        // 2. Display Employees
-        else if(choice == 2) {
+    // Display Employees
+    public static void displayEmployees() {
 
-            List<Employee__c> empList = [
+        List<Employee__c> empList = [
 
-                SELECT Id,
-                       Name,
-                       Emp_ID__c,
-                       Email__c,
-                       Birth_Date__c,
-                       Department__c
+            SELECT Id,
+                   Name,
+                   Emp_ID__c,
+                   Email__c,
+                   Birth_Date__c,
+                   Department__c
 
-                FROM Employee__c
-            ];
+            FROM Employee__c
+        ];
 
-            System.debug(
-                '===== EMPLOYEE RECORDS ====='
-            );
+        System.debug(
+            '===== EMPLOYEE RECORDS ====='
+        );
 
-            for(Employee__c emp : empList) {
-
-                System.debug(
-
-                    'Emp ID: ' + emp.Emp_ID__c +
-
-                    ' | Name: ' + emp.Name +
-
-                    ' | Email: ' + emp.Email__c +
-
-                    ' | Birth Date: ' +
-                    emp.Birth_Date__c +
-
-                    ' | Department: ' +
-                    emp.Department__c
-                );
-            }
-        }
-
-        // 3. Delete Employee
-        else if(choice == 3) {
-
-            Employee__c emp = [
-
-                SELECT Id
-                FROM Employee__c
-                WHERE Emp_ID__c = :empId
-                LIMIT 1
-            ];
-
-            delete emp;
+        for(Employee__c emp : empList) {
 
             System.debug(
-                'Employee Deleted Successfully'
+
+                'Emp ID: ' + emp.Emp_ID__c +
+
+                ' | Name: ' + emp.Name +
+
+                ' | Email: ' + emp.Email__c +
+
+                ' | Birth Date: ' +
+                emp.Birth_Date__c +
+
+                ' | Department: ' +
+                emp.Department__c
             );
         }
+    }
 
-        else {
 
-            System.debug('Invalid Choice');
-        }
+    // Update Employee
+    public static void updateEmployee(
+
+        Integer empId,
+        String newEmail,
+        String newDepartment
+    ) {
+
+        Employee__c emp = [
+
+            SELECT Id,
+                   Email__c,
+                   Department__c
+
+            FROM Employee__c
+
+            WHERE Emp_ID__c = :empId
+
+            LIMIT 1
+        ];
+
+        emp.Email__c = newEmail;
+        emp.Department__c = newDepartment;
+
+        update emp;
+
+        System.debug(
+            'Employee Updated Successfully'
+        );
+    }
+
+
+    // Delete Employee
+    public static void deleteEmployee(
+        Integer empId
+    ) {
+
+        Employee__c emp = [
+
+            SELECT Id
+            FROM Employee__c
+            WHERE Emp_ID__c = :empId
+            LIMIT 1
+        ];
+
+        delete emp;
+
+        System.debug(
+            'Employee Deleted Successfully'
+        );
     }
 }
 
@@ -263,16 +290,15 @@ Ctrl + E
 
 
 ========================================
-MENU OPERATIONS
+OPERATIONS
 ========================================
 
 ----------------------------------------
 1. ADD EMPLOYEE
 ----------------------------------------
 
-EmployeeManagementSystem.menu(
+EmployeeManagementSystem.addEmployee(
 
-    1,
     101,
     'Sanket',
     'sanket@gmail.com',
@@ -285,31 +311,29 @@ EmployeeManagementSystem.menu(
 2. DISPLAY EMPLOYEES
 ----------------------------------------
 
-EmployeeManagementSystem.menu(
+EmployeeManagementSystem.displayEmployees();
 
-    2,
-    null,
-    null,
-    null,
-    null,
-    null
+
+----------------------------------------
+3. UPDATE EMPLOYEE
+----------------------------------------
+
+EmployeeManagementSystem.updateEmployee(
+
+    101,
+    'newmail@gmail.com',
+    'HR'
 );
 
 
 ----------------------------------------
-3. DELETE EMPLOYEE
+4. DELETE EMPLOYEE
 ----------------------------------------
 
 Delete employee with Emp ID = 101
 
-EmployeeManagementSystem.menu(
-
-    3,
-    101,
-    null,
-    null,
-    null,
-    null
+EmployeeManagementSystem.deleteEmployee(
+    101
 );
 
 
@@ -339,20 +363,6 @@ Name: Sanket
 Email: sanket@gmail.com
 Birth Date: 2005-02-21
 Department: IT
-
-
-========================================
-WHY IT IS MENU-DRIVEN
-========================================
-
-Choice 1 → Add Employee
-
-Choice 2 → Display Employees
-
-Choice 3 → Delete Employee
-
-The menu is simulated using the
-choice parameter.
 
 
 ========================================

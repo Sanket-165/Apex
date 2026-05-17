@@ -1,0 +1,228 @@
+DEPLOY A STATIC WEBSITE ON AZURE VM
+(Directly Creating HTML File Inside /var/www/html)
+
+============================================================
+
+STEP 1 - CREATE AZURE VM
+
+Open:
+[https://portal.azure.com](https://portal.azure.com)
+
+Go to:
+Virtual Machines → Create
+
+============================================================
+
+CONFIGURE VM
+
+VM Name: StaticWebsiteVM
+OS: Ubuntu Server 22.04
+Size: Standard B1s
+Username: azureuser
+Authentication: SSH Public Key
+
+Allow inbound ports:
+
+* SSH (22)
+* HTTP (80)
+
+Download:
+.pem key file
+
+============================================================
+
+STEP 2 - CONNECT TO VM
+
+Open WSL terminal.
+
+Copy key:
+
+cp /mnt/c/Users/YOUR_USERNAME/Downloads/myvm_key.pem ~/
+
+Give permission:
+
+chmod 400 ~/myvm_key.pem
+
+SSH into VM:
+
+ssh -i ~/myvm_key.pem azureuser@PUBLIC_IP
+
+Example:
+
+ssh -i ~/myvm_key.pem [azureuser@20.xx.xx.xx](mailto:azureuser@20.xx.xx.xx)
+
+============================================================
+
+STEP 3 - UPDATE UBUNTU
+
+Inside VM:
+
+sudo apt update && sudo apt upgrade -y
+
+============================================================
+
+STEP 4 - INSTALL NGINX
+
+sudo apt install nginx -y
+
+============================================================
+
+STEP 5 - START NGINX
+
+sudo systemctl start nginx
+
+Enable on boot:
+
+sudo systemctl enable nginx
+
+Check status:
+
+sudo systemctl status nginx
+
+Expected:
+active (running)
+
+============================================================
+
+STEP 6 - REMOVE DEFAULT NGINX PAGE
+
+sudo rm /var/www/html/index.nginx-debian.html
+
+============================================================
+
+STEP 7 - CREATE HTML FILE DIRECTLY
+
+Open file:
+
+sudo nano /var/www/html/index.html
+
+Paste:
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Azure Static Website</title>
+
+```
+<style>
+
+    body {
+        font-family: Arial;
+        background: #f4f4f4;
+        text-align: center;
+        margin-top: 100px;
+    }
+
+    h1 {
+        color: #2563eb;
+    }
+
+    p {
+        font-size: 20px;
+    }
+
+</style>
+```
+
+</head>
+
+<body>
+
+```
+<h1>Website Successfully Deployed 🚀</h1>
+
+<p>Static Website Hosted on Azure VM using Nginx</p>
+```
+
+</body>
+
+</html>
+
+============================================================
+
+STEP 8 - SAVE FILE
+
+Press:
+CTRL + X
+
+Then:
+Y
+
+Then:
+ENTER
+
+============================================================
+
+STEP 9 - GIVE PERMISSIONS
+
+sudo chmod -R 755 /var/www/html
+
+============================================================
+
+STEP 10 - RESTART NGINX
+
+sudo systemctl restart nginx
+
+============================================================
+
+STEP 11 - CONFIGURE AZURE NETWORKING
+
+Go to:
+Azure Portal → VM → Networking
+
+Ensure inbound rules allow:
+
+22 → SSH
+80 → HTTP
+
+============================================================
+
+STEP 12 - OPEN WEBSITE
+
+Open browser:
+
+http://YOUR_PUBLIC_IP
+
+Example:
+
+[http://20.xx.xx.xx](http://20.xx.xx.xx)
+
+============================================================
+
+EXPECTED OUTPUT
+
+Browser displays:
+
+Website Successfully Deployed 🚀
+Static Website Hosted on Azure VM using Nginx
+
+============================================================
+
+IMPORTANT COMMANDS
+
+Restart nginx:
+
+sudo systemctl restart nginx
+
+Check nginx status:
+
+sudo systemctl status nginx
+
+Test nginx config:
+
+sudo nginx -t
+
+============================================================
+
+PROJECT STRUCTURE
+
+/var/www/html/
+└── index.html
+
+============================================================
+
+CONCLUSION
+
+A static website was successfully deployed on a Microsoft Azure Ubuntu Virtual Machine using the Nginx web server. The HTML file was directly created inside /var/www/html, making the website publicly accessible through the VM’s public IP address.

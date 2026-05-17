@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FitZone Gym</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #111827, #1f2937);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 20px;
+        }
+
+        .home {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .home h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+            color: #ff4d4d;
+        }
+
+        .home p {
+            font-size: 18px;
+            color: #d1d5db;
+        }
+
+        .chat-container {
+            width: 420px;
+            max-width: 100%;
+            background-color: #ffffff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0px 8px 25px rgba(0,0,0,0.4);
+        }
+
+        .chat-header {
+            background: linear-gradient(to right, #ef4444, #dc2626);
+            color: white;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .chatbox {
+            height: 350px;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #f9fafb;
+        }
+
+        .bot-message {
+            background-color: #e5e7eb;
+            color: black;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            max-width: 80%;
+            line-height: 1.5;
+        }
+
+        .user-message {
+            background-color: #ef4444;
+            color: white;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            margin-left: auto;
+            max-width: 80%;
+            text-align: right;
+            line-height: 1.5;
+        }
+
+        .input-area {
+            display: flex;
+            padding: 15px;
+            background-color: white;
+            border-top: 1px solid #ddd;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        input:focus {
+            border-color: #ef4444;
+        }
+
+        button {
+            margin-left: 10px;
+            padding: 12px 18px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+
+        .chatbox::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chatbox::-webkit-scrollbar-thumb {
+            background: #ef4444;
+            border-radius: 10px;
+        }
+
+        
+
+    </style>
+</head>
+
+<body>
+
+    <section class="home">
+        <h1>Welcome to FitZone 🏋️</h1>
+        <p>Your Fitness Partner</p>
+    </section>
+
+    <div class="chat-container">
+
+        <div class="chat-header">
+            FitZone Assistant
+        </div>
+
+        <div id="chatbox" class="chatbox">
+
+            <div class="bot-message">
+                Hello! Ask me about gym plans, timings, trainers, diet and more 💪
+            </div>
+
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+
+    </div>
+
+    <script>
+
+        function sendMessage() {
+
+            let input = document.getElementById("userInput");
+            let message = input.value.trim();
+
+            if(message === "") return;
+
+            displayMessage(message, "user-message");
+
+            let response = getResponse(message.toLowerCase());
+
+            setTimeout(() => {
+                displayMessage(response, "bot-message");
+            }, 500);
+
+            input.value = "";
+        }
+
+        function displayMessage(message, className) {
+
+            let chatbox = document.getElementById("chatbox");
+
+            let div = document.createElement("div");
+
+            div.className = className;
+            div.innerText = message;
+
+            chatbox.appendChild(div);
+
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        document.getElementById("userInput").addEventListener("keypress", function(event){
+
+            if(event.key === "Enter"){
+                sendMessage();
+            }
+
+        });
+
+        function getResponse(message) {
+
+            if (message.includes("membership") || message.includes("fees") || message.includes("plan")) {
+                return "We offer:\n1. Monthly Plan: ₹999/month\n2. 3-Month Plan: ₹2499\n3. Yearly Plan: ₹8999";
+            }
+
+            else if (message.includes("timing") || message.includes("hours")) {
+                return "We are open from 5 AM to 11 PM daily.";
+            }
+
+            else if (message.includes("trainer")) {
+                return "Yes! Certified personal trainers are available.";
+            }
+
+            else if (message.includes("diet")) {
+                return "Customized diet plans are available for premium members.";
+            }
+
+            else if (message.includes("weight loss")) {
+                return "We provide cardio and fat-loss training programs.";
+            }
+
+            else if (message.includes("muscle")) {
+                return "Strength and muscle gain programs are available.";
+            }
+
+            else if (message.includes("trial")) {
+                return "Yes! We offer a 1-day free trial.";
+            }
+
+            else if (message.includes("contact")) {
+                return "Contact us at: 9876543210";
+            }
+
+            else if (message.includes("location")) {
+                return "We are located near Elpro City Square Mall, Chinchwad.";
+            }
+
+            else {
+                return "Sorry, I didn't understand that. Please ask about plans, trainers, timings, diet or equipment.";
+            }
+        }
+
+    </script>
+
+</body>
+</html>
